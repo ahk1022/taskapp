@@ -52,6 +52,11 @@ const userSchema = new mongoose.Schema({
     ref: 'Package',
     default: null
   },
+  packageStatus: {
+    type: String,
+    enum: ['pending', 'active', 'expired'],
+    default: null
+  },
   packagePurchaseDate: {
     type: Date,
     default: null

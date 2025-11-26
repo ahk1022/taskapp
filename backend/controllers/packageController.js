@@ -44,6 +44,7 @@ const purchasePackage = async (req, res) => {
 
     // Update user package
     user.currentPackage = package._id;
+    user.packageStatus = 'pending';
     user.packagePurchaseDate = new Date();
     await user.save();
 
@@ -64,6 +65,7 @@ const purchasePackage = async (req, res) => {
       package: package,
       user: {
         currentPackage: package,
+        packageStatus: user.packageStatus,
         packagePurchaseDate: user.packagePurchaseDate
       }
     });
