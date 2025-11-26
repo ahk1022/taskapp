@@ -12,6 +12,18 @@ const getAvailableTasks = async (req, res) => {
       return res.status(403).json({ message: 'Please purchase a package to access tasks' });
     }
 
+    // Check if package is pending approval
+    const pendingTransaction = await Transaction.findOne({
+      user: user._id,
+      type: 'package_purchase',
+      relatedPackage: user.currentPackage._id,
+      status: 'pending'
+    });
+
+    if (pendingTransaction) {
+      return res.status(403).json({ message: 'Your package is pending admin approval' });
+    }
+
     // Get tasks completed today
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -67,6 +79,18 @@ const startTask = async (req, res) => {
 
     if (!user.currentPackage) {
       return res.status(403).json({ message: 'No active package' });
+    }
+
+    // Check if package is pending approval
+    const pendingTransaction = await Transaction.findOne({
+      user: user._id,
+      type: 'package_purchase',
+      relatedPackage: user.currentPackage._id,
+      status: 'pending'
+    });
+
+    if (pendingTransaction) {
+      return res.status(403).json({ message: 'Your package is pending admin approval' });
     }
 
     const task = await Task.findById(taskId);

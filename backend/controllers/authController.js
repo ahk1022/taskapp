@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Transaction = require('../models/Transaction');
 const jwt = require('jsonwebtoken');
 
 // Generate JWT Token
@@ -107,13 +108,37 @@ const login = async (req, res) => {
 
     const token = generateToken(user._id);
 
+    // Check if user has a pending package purchase
+    let packageStatus = null;
+    let currentPackage = user.currentPackage;
+    let pendingPackage = null;
+
+    if (user.currentPackage) {
+      const pendingTransaction = await Transaction.findOne({
+        user: user._id,
+        type: 'package_purchase',
+        relatedPackage: user.currentPackage._id,
+        status: 'pending'
+      });
+
+      if (pendingTransaction) {
+        packageStatus = 'pending';
+        pendingPackage = user.currentPackage;
+        currentPackage = null; // Don't show as current until approved
+      } else {
+        packageStatus = 'approved';
+      }
+    }
+
     res.json({
       _id: user._id,
       username: user.username,
       email: user.email,
       referralCode: user.referralCode,
       wallet: user.wallet,
-      currentPackage: user.currentPackage,
+      currentPackage,
+      pendingPackage,
+      packageStatus,
       tasksCompleted: user.tasksCompleted,
       referralCount: user.referralCount,
       isAdmin: user.isAdmin || false,
@@ -131,7 +156,35 @@ const getProfile = async (req, res) => {
       .select('-password')
       .populate('currentPackage');
 
-    res.json(user);
+    // Check if user has a pending package purchase
+    let packageStatus = null;
+    let currentPackage = user.currentPackage;
+    let pendingPackage = null;
+
+    if (user.currentPackage) {
+      const pendingTransaction = await Transaction.findOne({
+        user: user._id,
+        type: 'package_purchase',
+        relatedPackage: user.currentPackage._id,
+        status: 'pending'
+      });
+
+      if (pendingTransaction) {
+        packageStatus = 'pending';
+        pendingPackage = user.currentPackage;
+        currentPackage = null; // Don't show as current until approved
+      } else {
+        packageStatus = 'approved';
+      }
+    }
+
+    const userObj = user.toObject();
+    res.json({
+      ...userObj,
+      currentPackage,
+      pendingPackage,
+      packageStatus
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
