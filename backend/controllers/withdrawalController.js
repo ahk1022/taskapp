@@ -31,8 +31,8 @@ const requestWithdrawal = async (req, res) => {
       return res.status(400).json({ message: 'Account details are required' });
     }
 
-    // Calculate tax (12%)
-    const taxPercentage = 12;
+    // Calculate tax (8%)
+    const taxPercentage = 8;
     const taxAmount = Math.round(amount * (taxPercentage / 100));
     const netAmount = amount - taxAmount;
 
