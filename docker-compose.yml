@@ -4,7 +4,7 @@ services:
   # MongoDB Database
   mongodb:
     image: mongo:7.0
-    container_name: task-rewards-mongodb
+    container_name: MN-Works-mongodb
     restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
@@ -29,7 +29,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: task-rewards-app
+    container_name: MN-Works-app
     restart: unless-stopped
     environment:
       - NODE_ENV=production
@@ -55,7 +55,7 @@ services:
   # MongoDB Express (Database Admin UI) - Optional
   mongo-express:
     image: mongo-express:latest
-    container_name: task-rewards-mongo-express
+    container_name: MN-Works-mongo-express
     restart: unless-stopped
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: admin
