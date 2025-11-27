@@ -24,7 +24,7 @@ const withdrawalSchema = new mongoose.Schema({
   },
   method: {
     type: String,
-    enum: ['nayapay', 'bank', 'raast', 'zindigi'],
+    enum: ['nayapay', 'jazzcash', 'easypaisa', 'raast', 'zindigi'],
     required: true
   },
   accountDetails: {
