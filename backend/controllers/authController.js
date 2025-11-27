@@ -147,12 +147,6 @@ const getProfile = async (req, res) => {
       .select('-password')
       .populate('currentPackage');
 
-    // Debug log
-    console.log('User from DB:', {
-      currentPackage: user.currentPackage,
-      packageStatus: user.packageStatus
-    });
-
     // Use packageStatus directly from user model
     let currentPackage = null;
     let pendingPackage = null;
@@ -170,20 +164,12 @@ const getProfile = async (req, res) => {
     delete userObj.currentPackage;
     delete userObj.packageStatus;
 
-    const response = {
+    res.json({
       ...userObj,
       currentPackage,
       pendingPackage,
       packageStatus: user.packageStatus
-    };
-
-    console.log('Sending response:', {
-      currentPackage: response.currentPackage,
-      pendingPackage: response.pendingPackage,
-      packageStatus: response.packageStatus
     });
-
-    res.json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
