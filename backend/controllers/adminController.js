@@ -161,6 +161,7 @@ const approvePackagePurchase = async (req, res) => {
     }
 
     user.currentPackage = packageId;
+    user.packageStatus = 'active';
     user.packagePurchaseDate = new Date();
     await user.save();
 

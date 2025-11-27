@@ -108,25 +108,15 @@ const login = async (req, res) => {
 
     const token = generateToken(user._id);
 
-    // Check if user has a pending package purchase
-    let packageStatus = null;
-    let currentPackage = user.currentPackage;
+    // Use packageStatus directly from user model
+    let currentPackage = null;
     let pendingPackage = null;
 
     if (user.currentPackage) {
-      const pendingTransaction = await Transaction.findOne({
-        user: user._id,
-        type: 'package_purchase',
-        relatedPackage: user.currentPackage._id,
-        status: 'pending'
-      });
-
-      if (pendingTransaction) {
-        packageStatus = 'pending';
+      if (user.packageStatus === 'pending') {
         pendingPackage = user.currentPackage;
-        currentPackage = null; // Don't show as current until approved
       } else {
-        packageStatus = 'approved';
+        currentPackage = user.currentPackage;
       }
     }
 
@@ -138,7 +128,8 @@ const login = async (req, res) => {
       wallet: user.wallet,
       currentPackage,
       pendingPackage,
-      packageStatus,
+      packageStatus: user.packageStatus,
+      packagePurchaseDate: user.packagePurchaseDate,
       tasksCompleted: user.tasksCompleted,
       referralCount: user.referralCount,
       isAdmin: user.isAdmin || false,
@@ -156,35 +147,43 @@ const getProfile = async (req, res) => {
       .select('-password')
       .populate('currentPackage');
 
-    // Check if user has a pending package purchase
-    let packageStatus = null;
-    let currentPackage = user.currentPackage;
+    // Debug log
+    console.log('User from DB:', {
+      currentPackage: user.currentPackage,
+      packageStatus: user.packageStatus
+    });
+
+    // Use packageStatus directly from user model
+    let currentPackage = null;
     let pendingPackage = null;
 
     if (user.currentPackage) {
-      const pendingTransaction = await Transaction.findOne({
-        user: user._id,
-        type: 'package_purchase',
-        relatedPackage: user.currentPackage._id,
-        status: 'pending'
-      });
-
-      if (pendingTransaction) {
-        packageStatus = 'pending';
+      if (user.packageStatus === 'pending') {
         pendingPackage = user.currentPackage;
-        currentPackage = null; // Don't show as current until approved
       } else {
-        packageStatus = 'approved';
+        currentPackage = user.currentPackage;
       }
     }
 
     const userObj = user.toObject();
-    res.json({
+    // Remove fields to avoid conflicts when spreading
+    delete userObj.currentPackage;
+    delete userObj.packageStatus;
+
+    const response = {
       ...userObj,
       currentPackage,
       pendingPackage,
-      packageStatus
+      packageStatus: user.packageStatus
+    };
+
+    console.log('Sending response:', {
+      currentPackage: response.currentPackage,
+      pendingPackage: response.pendingPackage,
+      packageStatus: response.packageStatus
     });
+
+    res.json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

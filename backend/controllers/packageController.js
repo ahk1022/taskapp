@@ -48,6 +48,12 @@ const purchasePackage = async (req, res) => {
     user.packagePurchaseDate = new Date();
     await user.save();
 
+    console.log('Package purchased - User saved:', {
+      userId: user._id,
+      currentPackage: user.currentPackage,
+      packageStatus: user.packageStatus
+    });
+
     // Create transaction with payment proof
     await Transaction.create({
       user: user._id,
@@ -64,7 +70,8 @@ const purchasePackage = async (req, res) => {
       message: 'Package purchase initiated. Please complete payment and submit proof.',
       package: package,
       user: {
-        currentPackage: package,
+        currentPackage: null,
+        pendingPackage: package,
         packageStatus: user.packageStatus,
         packagePurchaseDate: user.packagePurchaseDate
       }
