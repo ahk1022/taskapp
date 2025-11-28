@@ -6,6 +6,10 @@ FROM node:18-alpine AS frontend-build
 
 WORKDIR /app/frontend
 
+# Build argument for API URL
+ARG REACT_APP_API_URL=http://13.210.143.91:5000/api
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+
 # Copy frontend package files
 COPY frontend/package*.json ./
 
