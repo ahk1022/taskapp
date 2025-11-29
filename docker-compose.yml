@@ -30,7 +30,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - REACT_APP_API_URL=https://13.210.143.91:5000/api
+        - REACT_APP_API_URL=https://mnworks.site/api
     container_name: MN-Works-app
     restart: unless-stopped
     environment:

@@ -41,7 +41,7 @@ const createAdminAccount = async () => {
     console.log('Email: admin@taskrewards.com');
     console.log('Password: admin123');
     console.log('\nAdmin Dashboard URL:');
-    console.log('http://13.210.143.91:3000/admin');
+    console.log('https://mnworks.site/admin');
     console.log('==========================================\n');
 
     process.exit(0);
