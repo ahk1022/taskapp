@@ -12,14 +12,14 @@ const packages = [
     description: 'Perfect for beginners who want to start earning',
     tasksPerDay: 3,
     rewardPerTask: 10,
-    totalDays: 30,
-    totalEarnings: 900,
+    totalDays: 90,
+    totalEarnings: 2700,
     features: [
       '3 tasks per day',
       '10 rupees per task',
-      '30 days validity',
-      'Total earnings: 900 rupees',
-      'Profit: 400 rupees'
+      '90 days validity',
+      'Total earnings: 2700 rupees',
+      'Profit: 2200 rupees'
     ]
   },
   {
@@ -28,14 +28,14 @@ const packages = [
     description: 'Great value package for regular users',
     tasksPerDay: 6,
     rewardPerTask: 10,
-    totalDays: 30,
-    totalEarnings: 1800,
+    totalDays: 90,
+    totalEarnings: 5400,
     features: [
       '6 tasks per day',
       '10 rupees per task',
-      '30 days validity',
-      'Total earnings: 1800 rupees',
-      'Profit: 800 rupees'
+      '90 days validity',
+      'Total earnings: 5400 rupees',
+      'Profit: 4400 rupees'
     ]
   },
   {
@@ -44,14 +44,14 @@ const packages = [
     description: 'Premium package for serious earners',
     tasksPerDay: 12,
     rewardPerTask: 10,
-    totalDays: 30,
-    totalEarnings: 3600,
+    totalDays: 90,
+    totalEarnings: 10800,
     features: [
       '12 tasks per day',
       '10 rupees per task',
-      '30 days validity',
-      'Total earnings: 3600 rupees',
-      'Profit: 1600 rupees'
+      '90 days validity',
+      'Total earnings: 10800 rupees',
+      'Profit: 8800 rupees'
     ]
   },
   {
@@ -60,14 +60,14 @@ const packages = [
     description: 'Ultimate package for maximum earnings',
     tasksPerDay: 21,
     rewardPerTask: 10,
-    totalDays: 30,
-    totalEarnings: 6300,
+    totalDays: 90,
+    totalEarnings: 18900,
     features: [
       '21 tasks per day',
       '10 rupees per task',
-      '30 days validity',
-      'Total earnings: 6300 rupees',
-      'Profit: 2800 rupees'
+      '90 days validity',
+      'Total earnings: 18900 rupees',
+      'Profit: 15400 rupees'
     ]
   }
 ];
