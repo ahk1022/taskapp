@@ -30,6 +30,14 @@ const purchasePackage = async (req, res) => {
   try {
     const { packageId, paymentMethod, paymentProof, transactionId } = req.body;
 
+    console.log('Purchase request received:', {
+      packageId,
+      paymentMethod,
+      hasPaymentProof: !!paymentProof,
+      paymentProofLength: paymentProof ? paymentProof.length : 0,
+      transactionId
+    });
+
     // Validate payment proof
     if (!paymentProof && !transactionId) {
       return res.status(400).json({ message: 'Please provide payment proof (image or transaction ID)' });
@@ -41,6 +49,9 @@ const purchasePackage = async (req, res) => {
     }
 
     const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
     // Update user package
     user.currentPackage = package._id;
@@ -71,6 +82,7 @@ const purchasePackage = async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Purchase package error:', error);
     res.status(500).json({ message: error.message });
   }
 };
