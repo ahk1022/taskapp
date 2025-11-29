@@ -15,10 +15,12 @@ const {
   createTask,
   updateTask,
   deleteTask,
-  toggleTaskStatus
+  toggleTaskStatus,
+  importTasksFromExcel
 } = require('../controllers/taskController');
 const { protect } = require('../middleware/auth');
 const { checkAdmin } = require('../middleware/admin');
+const { uploadExcel } = require('../middleware/fileUpload');
 
 // All admin routes require authentication and admin privileges
 router.use(protect);
@@ -45,6 +47,7 @@ router.get('/transactions', getAllTransactions);
 // Tasks
 router.get('/tasks', getAllTasks);
 router.post('/tasks', createTask);
+router.post('/tasks/import', uploadExcel.single('file'), importTasksFromExcel);
 router.put('/tasks/:taskId', updateTask);
 router.delete('/tasks/:taskId', deleteTask);
 router.put('/tasks/:taskId/toggle', toggleTaskStatus);

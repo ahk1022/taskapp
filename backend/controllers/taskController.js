@@ -2,6 +2,7 @@ const Task = require('../models/Task');
 const UserTask = require('../models/UserTask');
 const User = require('../models/User');
 const Transaction = require('../models/Transaction');
+const XLSX = require('xlsx');
 
 // Get available tasks for user
 const getAvailableTasks = async (req, res) => {
@@ -315,6 +316,93 @@ const toggleTaskStatus = async (req, res) => {
   }
 };
 
+// Import tasks from Excel file (Admin only)
+const importTasksFromExcel = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    // Parse Excel file from buffer
+    const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const data = XLSX.utils.sheet_to_json(worksheet);
+
+    if (data.length === 0) {
+      return res.status(400).json({ message: 'Excel file is empty' });
+    }
+
+    const validTypes = ['watch_video', 'click_ad', 'survey', 'social_media', 'other'];
+    const results = {
+      success: 0,
+      failed: 0,
+      errors: []
+    };
+
+    for (let i = 0; i < data.length; i++) {
+      const row = data[i];
+      const rowNum = i + 2; // Excel row number (1-indexed + header row)
+
+      try {
+        // Validate required fields
+        if (!row.title || !row.description) {
+          results.failed++;
+          results.errors.push(`Row ${rowNum}: Title and description are required`);
+          continue;
+        }
+
+        // Validate type
+        let taskType = row.type ? row.type.toLowerCase().replace(' ', '_') : 'other';
+        if (!validTypes.includes(taskType)) {
+          taskType = 'other';
+        }
+
+        // Parse duration
+        let duration = parseInt(row.duration) || 30;
+        if (duration < 1) duration = 30;
+
+        // Parse isActive
+        let isActive = true;
+        if (row.isActive !== undefined) {
+          if (typeof row.isActive === 'boolean') {
+            isActive = row.isActive;
+          } else if (typeof row.isActive === 'string') {
+            isActive = row.isActive.toLowerCase() === 'true' || row.isActive === '1';
+          } else if (typeof row.isActive === 'number') {
+            isActive = row.isActive === 1;
+          }
+        }
+
+        // Create task
+        await Task.create({
+          title: row.title.toString().trim(),
+          description: row.description.toString().trim(),
+          type: taskType,
+          url: row.url ? row.url.toString().trim() : '',
+          duration: duration,
+          isActive: isActive
+        });
+
+        results.success++;
+      } catch (err) {
+        results.failed++;
+        results.errors.push(`Row ${rowNum}: ${err.message}`);
+      }
+    }
+
+    res.json({
+      message: `Import completed. ${results.success} tasks created, ${results.failed} failed.`,
+      success: results.success,
+      failed: results.failed,
+      errors: results.errors.slice(0, 10) // Return first 10 errors only
+    });
+  } catch (error) {
+    console.error('Import tasks error:', error);
+    res.status(500).json({ message: error.message || 'Failed to import tasks' });
+  }
+};
+
 module.exports = {
   getAvailableTasks,
   startTask,
@@ -324,5 +412,6 @@ module.exports = {
   getAllTasks,
   updateTask,
   deleteTask,
-  toggleTaskStatus
+  toggleTaskStatus,
+  importTasksFromExcel
 };
