@@ -7,7 +7,7 @@ FROM node:18-alpine AS frontend-build
 WORKDIR /app/frontend
 
 # Build argument for API URL
-ARG REACT_APP_API_URL=http://13.210.143.91:5055/api
+ARG REACT_APP_API_URL=https://13.210.143.91:5000/api
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
 # Copy frontend package files
@@ -49,11 +49,11 @@ COPY backend/ ./backend/
 COPY --from=frontend-build /app/frontend/build ./frontend/build
 
 # Expose ports
-EXPOSE 5055 3062
+EXPOSE 5000 3000
 
 # Set environment variables
 ENV NODE_ENV=production
-ENV PORT=5055
+ENV PORT=5000
 
 # Create initialization and startup script
 RUN echo '#!/bin/sh' > /app/start.sh && \
@@ -78,17 +78,17 @@ RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'echo "=================================="' >> /app/start.sh && \
     echo '' >> /app/start.sh && \
     echo '# Start frontend' >> /app/start.sh && \
-    echo 'echo "✓ Starting frontend on port 3062..."' >> /app/start.sh && \
-    echo 'serve -s /app/frontend/build -l 3062 &' >> /app/start.sh && \
+    echo 'echo "✓ Starting frontend on port 3000..."' >> /app/start.sh && \
+    echo 'serve -s /app/frontend/build -l 3000 &' >> /app/start.sh && \
     echo '' >> /app/start.sh && \
     echo '# Start backend' >> /app/start.sh && \
-    echo 'echo "✓ Starting backend on port 5055..."' >> /app/start.sh && \
+    echo 'echo "✓ Starting backend on port 5000..."' >> /app/start.sh && \
     echo 'cd /app/backend && node server.js' >> /app/start.sh && \
     chmod +x /app/start.sh
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:5055', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
+    CMD node -e "require('http').get('http://localhost:5000', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
 
 # Run the startup script
 CMD ["/app/start.sh"]

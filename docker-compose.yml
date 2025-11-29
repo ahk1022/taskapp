@@ -11,7 +11,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: admin123
       MONGO_INITDB_DATABASE: task-reward-app
     ports:
-      - "8090:27017"
+      - "27017:27017"
     volumes:
       - mongodb_data:/data/db
       - mongodb_config:/data/configdb
@@ -30,25 +30,25 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - REACT_APP_API_URL=http://13.210.143.91:5055/api
+        - REACT_APP_API_URL=https://13.210.143.91:5000/api
     container_name: MN-Works-app
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      - PORT=5055
+      - PORT=5000
       - MONGODB_URI=mongodb://admin:admin123@mongodb:27017/task-reward-app?authSource=admin
       - JWT_SECRET=your_jwt_secret_key_change_this_in_production_use_long_random_string
       - REFERRAL_BONUS=10
     ports:
-      - "3062:3062"  # Frontend
-      - "5055:5055"  # Backend API
+      - "3000:3000"  # Frontend
+      - "5000:5000"  # Backend API
     depends_on:
       mongodb:
         condition: service_healthy
     networks:
       - task-rewards-network
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5055', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
       interval: 30s
       timeout: 10s
       retries: 3
