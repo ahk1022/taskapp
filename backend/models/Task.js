@@ -11,7 +11,7 @@ const taskSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['watch_video'],
+    enum: ['watch_video', 'other'],
     default: 'watch_video'
   },
   url: {
