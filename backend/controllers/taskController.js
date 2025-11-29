@@ -333,7 +333,7 @@ const importTasksFromExcel = async (req, res) => {
       return res.status(400).json({ message: 'Excel file is empty' });
     }
 
-    const validTypes = ['watch_video', 'click_ad', 'survey', 'social_media', 'other'];
+    const validTypes = ['watch_video'];
     const results = {
       success: 0,
       failed: 0,
@@ -352,11 +352,8 @@ const importTasksFromExcel = async (req, res) => {
           continue;
         }
 
-        // Validate type
-        let taskType = row.type ? row.type.toLowerCase().replace(' ', '_') : 'other';
-        if (!validTypes.includes(taskType)) {
-          taskType = 'other';
-        }
+        // Validate type - only watch_video allowed
+        let taskType = 'watch_video';
 
         // Parse duration
         let duration = parseInt(row.duration) || 30;
