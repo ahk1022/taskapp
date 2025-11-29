@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const Package = require('./models/Package');
-const Task = require('./models/Task');
 
 dotenv.config();
 
@@ -72,95 +71,18 @@ const packages = [
   }
 ];
 
-const tasks = [
-  {
-    title: 'Watch Advertisement Video',
-    description: 'Watch a 30-second advertisement video completely',
-    type: 'watch_video',
-    url: 'https://example.com/video1',
-    duration: 30
-  },
-  {
-    title: 'Visit Sponsor Website',
-    description: 'Visit our sponsor website and browse for 1 minute',
-    type: 'click_ad',
-    url: 'https://example.com/sponsor',
-    duration: 60
-  },
-  {
-    title: 'Complete Short Survey',
-    description: 'Complete a quick 5-question survey',
-    type: 'survey',
-    url: 'https://example.com/survey',
-    duration: 120
-  },
-  {
-    title: 'Follow Social Media Page',
-    description: 'Follow our Facebook page and like 3 posts',
-    type: 'social_media',
-    url: 'https://facebook.com/example',
-    duration: 45
-  },
-  {
-    title: 'Watch Product Review',
-    description: 'Watch a product review video completely',
-    type: 'watch_video',
-    url: 'https://example.com/review',
-    duration: 60
-  },
-  {
-    title: 'Sign up for Newsletter',
-    description: 'Sign up for partner newsletter',
-    type: 'other',
-    url: 'https://example.com/newsletter',
-    duration: 30
-  },
-  {
-    title: 'Rate Mobile App',
-    description: 'Download and rate partner mobile app',
-    type: 'other',
-    url: 'https://example.com/app',
-    duration: 90
-  },
-  {
-    title: 'Share on WhatsApp',
-    description: 'Share promotional content on WhatsApp status',
-    type: 'social_media',
-    duration: 20
-  },
-  {
-    title: 'Watch Tutorial Video',
-    description: 'Watch educational tutorial video',
-    type: 'watch_video',
-    url: 'https://example.com/tutorial',
-    duration: 120
-  },
-  {
-    title: 'Visit E-commerce Store',
-    description: 'Visit partner e-commerce store and browse products',
-    type: 'click_ad',
-    url: 'https://example.com/store',
-    duration: 90
-  }
-];
-
 const seedDatabase = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
 
     console.log('Connected to MongoDB');
 
-    // Clear existing data
+    // Clear existing packages and insert new ones
     await Package.deleteMany({});
-    await Task.deleteMany({});
 
     // Insert packages
     const createdPackages = await Package.insertMany(packages);
     console.log(`✓ Created ${createdPackages.length} packages`);
-
-    // Insert tasks
-    const createdTasks = await Task.insertMany(tasks);
-    console.log(`✓ Created ${createdTasks.length} tasks`);
 
     console.log('Database seeded successfully!');
     process.exit(0);
