@@ -115,7 +115,10 @@ const login = async (req, res) => {
     if (user.currentPackage) {
       if (user.packageStatus === 'pending') {
         pendingPackage = user.currentPackage;
+      } else if (user.packageStatus === 'active') {
+        currentPackage = user.currentPackage;
       } else {
+        // For any other status (expired, etc.), still show as current package
         currentPackage = user.currentPackage;
       }
     }
@@ -124,6 +127,7 @@ const login = async (req, res) => {
       _id: user._id,
       username: user.username,
       email: user.email,
+      phone: user.phone,
       referralCode: user.referralCode,
       wallet: user.wallet,
       currentPackage,
@@ -154,7 +158,10 @@ const getProfile = async (req, res) => {
     if (user.currentPackage) {
       if (user.packageStatus === 'pending') {
         pendingPackage = user.currentPackage;
+      } else if (user.packageStatus === 'active') {
+        currentPackage = user.currentPackage;
       } else {
+        // For any other status (expired, etc.), still show as current package
         currentPackage = user.currentPackage;
       }
     }
@@ -163,12 +170,14 @@ const getProfile = async (req, res) => {
     // Remove fields to avoid conflicts when spreading
     delete userObj.currentPackage;
     delete userObj.packageStatus;
+    delete userObj.pendingPackage;
 
     res.json({
       ...userObj,
       currentPackage,
       pendingPackage,
-      packageStatus: user.packageStatus
+      packageStatus: user.packageStatus,
+      packagePurchaseDate: user.packagePurchaseDate
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -150,6 +150,8 @@ const approvePackagePurchase = async (req, res) => {
   try {
     const { userId, packageId } = req.body;
 
+    console.log('Approving package:', { userId, packageId });
+
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -160,10 +162,17 @@ const approvePackagePurchase = async (req, res) => {
       return res.status(404).json({ message: 'Package not found' });
     }
 
-    user.currentPackage = packageId;
+    user.currentPackage = package._id;
     user.packageStatus = 'active';
     user.packagePurchaseDate = new Date();
     await user.save();
+
+    console.log('Package approved successfully:', {
+      userId: user._id,
+      username: user.username,
+      packageStatus: user.packageStatus,
+      currentPackage: user.currentPackage
+    });
 
     // Update transaction to completed
     await Transaction.findOneAndUpdate(
