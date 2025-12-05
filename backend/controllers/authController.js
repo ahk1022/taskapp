@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Transaction = require('../models/Transaction');
+const Package = require('../models/Package');
 const jwt = require('jsonwebtoken');
 
 // Generate JWT Token
@@ -112,14 +113,22 @@ const login = async (req, res) => {
     let currentPackage = null;
     let pendingPackage = null;
 
-    if (user.currentPackage) {
+    // Get the package - either from populate or fetch directly
+    let packageData = user.currentPackage;
+
+    // If populate failed but user has a package reference, fetch it directly
+    if (!packageData && user._doc.currentPackage) {
+      packageData = await Package.findById(user._doc.currentPackage);
+    }
+
+    if (packageData) {
       if (user.packageStatus === 'pending') {
-        pendingPackage = user.currentPackage;
+        pendingPackage = packageData;
       } else if (user.packageStatus === 'active') {
-        currentPackage = user.currentPackage;
+        currentPackage = packageData;
       } else {
         // For any other status (expired, etc.), still show as current package
-        currentPackage = user.currentPackage;
+        currentPackage = packageData;
       }
     }
 
@@ -155,14 +164,22 @@ const getProfile = async (req, res) => {
     let currentPackage = null;
     let pendingPackage = null;
 
-    if (user.currentPackage) {
+    // Get the package - either from populate or fetch directly
+    let packageData = user.currentPackage;
+
+    // If populate failed but user has a package reference, fetch it directly
+    if (!packageData && user._doc.currentPackage) {
+      packageData = await Package.findById(user._doc.currentPackage);
+    }
+
+    if (packageData) {
       if (user.packageStatus === 'pending') {
-        pendingPackage = user.currentPackage;
+        pendingPackage = packageData;
       } else if (user.packageStatus === 'active') {
-        currentPackage = user.currentPackage;
+        currentPackage = packageData;
       } else {
         // For any other status (expired, etc.), still show as current package
-        currentPackage = user.currentPackage;
+        currentPackage = packageData;
       }
     }
 
